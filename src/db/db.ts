@@ -5,12 +5,12 @@ export interface IConnectionDB {
     createCollection(name: string, schema): Promise<void>,
     checkConnection(): boolean,
     disConnect() : Promise<boolean>,
-    client : MongoClient
+    getClient(): MongoClient
 }
 
 export default class implements IConnectionDB {
     private db: Db;
-    public client: MongoClient;
+    private client: MongoClient;
     public async connect() {
         if (!this.db) {
             const URI = process.env.DB_URL;
@@ -37,5 +37,9 @@ export default class implements IConnectionDB {
         } catch (error) {
             return false
         }
+    }
+
+    public getClient(){
+        return this.client;
     }
 }

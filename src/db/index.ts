@@ -24,6 +24,6 @@ export default class {
         if (!DbConnect) {
             DbConnect = new DB();
         }
-        return DbConnect.client;
+        return DbConnect.getClient();
     }
 }
