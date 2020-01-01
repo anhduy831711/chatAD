@@ -51,4 +51,3 @@ issues.json
 .upload
 *.pem
 dist
-env
