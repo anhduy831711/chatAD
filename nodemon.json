@@ -17,6 +17,6 @@
       ".idea",
       "src/**/*.spec.ts"
     ],
-    "exec": "NODE_ENV=dev ts-node index.ts"
+    "exec": "npx ts-node index.ts"
   }
   
