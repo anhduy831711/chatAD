@@ -1,8 +1,10 @@
-import { Response, Request, Router } from "express";
+import { Response, Request, Router, NextFunction } from "express";
 import * as Session from 'express-session';
 import DB from "../db";
 import { Db } from "mongodb";
 import { IService } from "../services/base";
+import event from "../event";
+import * as EventEmitter from "events";
 
 interface IResult {
     code: number;
@@ -29,12 +31,14 @@ export default abstract class {
     protected req: Request;
     protected res: Response;
     protected db: Db;
-    protected session: any
+    private user: any
+    private event: EventEmitter;
 
-    constructor(req: Request, res: Response) {
+    constructor(req, res) {
         this.req = req;
         this.res = res;
-        this.session = userDefault;
+        this.user = req.authentication;
+        this.event = event.start();
     }
 
     public static setRouter(routers: IRouter[]): Router {
@@ -79,6 +83,10 @@ export default abstract class {
     abstract async action();
 
     protected buildService<T extends IService>(service: { new(...args): T }): T {
-        return new service(this.db, this.session);
+        return new service(this.db, this.user);
+    }
+
+    protected emitEvent(event, ...args): boolean {
+        return this.event.emit(event, ...args);
     }
 }

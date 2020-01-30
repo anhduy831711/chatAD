@@ -1,18 +1,27 @@
 import { Db } from "mongodb"
 
-export interface IService{}
+export interface IService {
+    getUser(): any
+}
 
 export default class Base implements IService {
     protected db: Db;
-    private session;
+    private user;
     protected currentUser;
-    constructor(DB: Db, session : any) {
+    constructor(DB: Db, user: any) {
         this.db = DB;
-        this.session = session;
-        this.currentUser = this.session.user;
+        this.user = user;
     }
 
-    protected buildService<T extends IService>(service: { new(...args): T }): T{
-        return new service(this.db, this.session);
+    protected buildService<T extends IService>(service: { new(...args): T }): T {
+        return new service(this.db, this.user);
+    }
+
+    public getUser() {
+        return this.user;
+    }
+
+    protected buildDataAccess<T>(Model: { new(db: Db): T }): T {
+        return new Model(this.db);
     }
 }

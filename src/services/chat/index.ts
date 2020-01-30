@@ -10,12 +10,12 @@ export interface IChat extends IService {
 
 export default class extends Base implements IChat {
     getAll(): Promise<Array<IAllowance>> {
-        let allowanceDAO: IAllowanceDAO = new Allowance(this.db);
+        var allowanceDAO = this.buildDataAccess<IAllowanceDAO>(Allowance);
         return allowanceDAO.getAll({});
     }
 
     async insertOne(allowance : IAllowance): Promise<IAllowance> {
-        let allowanceDAO: IAllowanceDAO = new Allowance(this.db);
+        var allowanceDAO = this.buildDataAccess<IAllowanceDAO>(Allowance);
         return await allowanceDAO.create(allowance);
     }
 }

@@ -1,9 +1,11 @@
-import { Db, Collection } from "mongodb";
+import { Db, Collection, ObjectId, UpdateWriteOpResult } from "mongodb";
 
 export interface ICommunicationDB<T> {
-    getAll(query): Promise<Array<T>>,
+    getAll(query: any, project?: any): Promise<Array<T>>,
     create(data: T),
-    createMany(datas: Array<T>)
+    createMany(datas: Array<T>),
+    updateOne(query: object, data: object): Promise<UpdateWriteOpResult>,
+    deleteOne(id: string)
 }
 
 export default abstract class <T> implements ICommunicationDB<T> {
@@ -14,8 +16,8 @@ export default abstract class <T> implements ICommunicationDB<T> {
         this.collection = this.db.collection<T>(this.getName());
     }
 
-    public getAll(query): Promise<Array<T>> {
-        return this.collection.find(query).toArray();
+    public getAll(query: any, project?: Object): Promise<Array<T>> {
+        return this.collection.find(query).project(this.buildProject(project)).toArray();
     }
 
     public create(data: T) {
@@ -27,4 +29,23 @@ export default abstract class <T> implements ICommunicationDB<T> {
     }
 
     protected abstract getName(): string;
+    protected getProject() {
+        return {};
+    }
+
+    private buildProject(project: any) {
+        return {
+            ...project,
+            ...this.getProject()
+        }
+    }
+
+    public async updateOne(query: object, data: object): Promise<UpdateWriteOpResult> {
+        return await this.collection.updateOne(query, data);
+    };
+
+    public async deleteOne(id: string) {
+        let query: any = { _id: id };
+        return this.collection.deleteOne(query)
+    }
 }

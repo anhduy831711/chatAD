@@ -19,6 +19,7 @@ import * as timeout from "connect-timeout";
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
 
+import event from "./event";
 import "./config";
 
 (async () => {
@@ -35,9 +36,17 @@ import "./config";
     //     key: fs.readFileSync(path.join(__dirname, "../key.pem")),
     //     cert: fs.readFileSync(path.join(__dirname, "../cert.pem"))
     // };
+
+    let Event = event.start();
+
+    Event.on("test", (data,data2) => {
+        console.log("da vao day data");
+        console.log(data);
+        console.log(data2);
+    })
     
     var app = express();
-    
+
     logger.format('ebp', '[Backend] :method :url :status :res[content-length] - :response-time ms');
 
     // view engine setup
@@ -68,12 +77,12 @@ import "./config";
         }
     }));
 
-    app.get("/test",(req,res)=>{
+    app.get("/test", (req, res) => {
         res.render("index");
     })
 
     const wss = new WebSocket.Server({ noServer: true });
-    
+
     // if (cluster.isMaster) {
     //     console.log(`Master ${process.pid} is running`);
 
@@ -90,25 +99,25 @@ import "./config";
     //     server.listen(PORT, () => {
     //         console.log(`start server at port ${PORT}`);
     //     });
-    
-    
+
+
     //     server.on('upgrade', (request, socket, head) => {
     //         console.log('Parsing session from request...');
-    
+
     //         const pathname = url.parse(request.url).pathname;
     //         console.log(pathname);
-    
+
     //         wss.handleUpgrade(request, socket, head, function done(ws) {
     //             wss.emit('connection', ws, request);
     //         });
     //     })
     //     wss.on('connection', (ws) => {
-    
+
     //         console.log('started client interval');
     //         ws.on('message', function incoming(message) {
     //             console.log('received: %s', message);
     //         });
-    
+
     //         ws.on('close', function () {
     //             console.log('stopping client interval');
     //             //clearInterval(id);
