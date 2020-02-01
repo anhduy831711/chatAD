@@ -5,7 +5,8 @@ export interface ICommunicationDB<T> {
     create(data: T),
     createMany(datas: Array<T>),
     updateOne(query: object, data: object): Promise<UpdateWriteOpResult>,
-    deleteOne(id: string)
+    deleteOne(id: string),
+    findOne(query: object, project?: any): Promise<T>
 }
 
 export default abstract class <T> implements ICommunicationDB<T> {
@@ -47,5 +48,9 @@ export default abstract class <T> implements ICommunicationDB<T> {
     public async deleteOne(id: string) {
         let query: any = { _id: id };
         return this.collection.deleteOne(query)
+    }
+
+    public async findOne(query: object, project: object): Promise<T> {
+        return this.collection.findOne(query, project);
     }
 }

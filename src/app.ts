@@ -3,7 +3,7 @@ import * as path from "path";
 import * as cookieParser from "cookie-parser";
 import * as logger from "morgan";
 import * as cors from "cors";
-import { CORS, optionsPublic, bodyParserOptions } from "./constant/constant";
+import { constant } from "./constant";
 import route from "./routes";
 import * as http from "http";
 import * as cluster from "cluster";
@@ -22,6 +22,8 @@ import * as rateLimit from 'express-rate-limit';
 import event from "./event";
 import "./config";
 
+const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
+
 (async () => {
     let Db = await DB.start();
     const numCPUs = cpus().length;
@@ -39,12 +41,12 @@ import "./config";
 
     let Event = event.start();
 
-    Event.on("test", (data,data2) => {
+    Event.on("test", (data, data2) => {
         console.log("da vao day data");
         console.log(data);
         console.log(data2);
     })
-    
+
     var app = express();
 
     logger.format('ebp', '[Backend] :method :url :status :res[content-length] - :response-time ms');
@@ -62,7 +64,6 @@ import "./config";
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use("/images", express.static(path.join(__dirname, "images"), optionsPublic));
-    app.use("/api", limit, route);
     app.use(session({
         name: 'chatDA',
         secret: process.env.APP_SECRET || 'session_secret',
@@ -76,6 +77,8 @@ import "./config";
             maxAge: 1000 * 60 * 60 * 24 // * 30 // 30 days
         }
     }));
+
+    app.use("/api", limit, route);
 
     app.get("/test", (req, res) => {
         res.render("index");
@@ -144,7 +147,7 @@ import "./config";
         });
     })
     wss.on('connection', (ws) => {
-
+        globalThis.ws = ws;
         console.log('started client interval');
         ws.on('message', function incoming(message) {
             console.log('received: %s', message);

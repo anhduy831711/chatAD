@@ -6,7 +6,7 @@ export default class extends base {
     async action() {
         //  console.log("da vao day");
         try {
-            let allowance = this.req.body as IAllowance;
+            let allowance = this.body() as IAllowance;
             let service_chat = this.buildService<IChat>(Chat);
             let allowances = await service_chat.insertOne({
                 year: allowance.year,

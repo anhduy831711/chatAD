@@ -6,7 +6,8 @@ import { IService } from "../services/base";
 import event from "../event";
 import * as EventEmitter from "events";
 
-interface IResult {
+
+export interface IResult {
     code: number;
     data?: any;
     error?: Error;
@@ -29,15 +30,15 @@ let userDefault = {
 export default abstract class {
 
     protected req: Request;
-    protected res: Response;
-    protected db: Db;
-    private user: any
+    private res: Response;
+    private db: Db;
     private event: EventEmitter;
+    protected session: Session;
 
-    constructor(req, res) {
+    constructor(req: Request, res: Response) {
         this.req = req;
         this.res = res;
-        this.user = req.authentication;
+        this.session = req["session"];
         this.event = event.start();
     }
 
@@ -70,23 +71,39 @@ export default abstract class {
     }
 
     public async main() {
-        this.db = await DB.start();
-        let result = await this.action();
-        //  console.log(result);
+        try {
+            this.db = await DB.start();
+            let result = await this.action();
 
-        if (result) {
-            this.res.set('Content-Type', 'application/json');
-            this.res.json(result);
+            if (result) {
+                this.res.set('Content-Type', 'application/json');
+                this.res.json(result);
+            }
+        } catch (error) {
+            process.env.NODE_ENV === 'dev' && console.error(error);
+            this.res.json(this.result(-1, error));
         }
     }
 
     abstract async action();
 
     protected buildService<T extends IService>(service: { new(...args): T }): T {
-        return new service(this.db, this.user);
+        return new service(this.db, this.session);
     }
 
     protected emitEvent(event, ...args): boolean {
         return this.event.emit(event, ...args);
+    }
+
+    protected get params() {
+        return this.req.params;
+    }
+
+    protected get query() {
+        return this.req.query;
+    }
+
+    protected get body() {
+        return this.req.body;
     }
 }

@@ -10,8 +10,8 @@ declare interface IValidator {
     [path: string]: IProperties | ISchema
 }
 
-declare interface ISchema {
-    bsonType: string,
+export declare interface ISchema {
+    bsonType: string | number,
     required: Array<string>,
     properties: IValidator
 }
