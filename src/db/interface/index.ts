@@ -19,9 +19,8 @@ export interface IUser {
 
 export interface IGroup {
     name: string,
-    image?: string,
-    users?: Array<IUser>,
-    messages?: Array<IMessage>
+    avatar?: string,
+    members?: Array<IUser>
 }
 
 export interface IMessage {

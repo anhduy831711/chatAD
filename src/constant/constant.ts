@@ -25,3 +25,9 @@ export const bodyParserOptions = {
     strict: false,
     limit: '10mb'
 };
+
+export const typeMessage = {
+    group : "GROUP",
+    user : "USER",
+    system : "SYSTEM"
+}

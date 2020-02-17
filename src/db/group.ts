@@ -1,17 +1,17 @@
 import Base, { ICommunicationDB } from "./base";
-import { IUser } from "./interface";
+import { IGroup } from "./interface";
 
-export interface IUserDAO extends ICommunicationDB<IUser> {
+export interface IGroupDAO extends ICommunicationDB<IGroup> {
 
 }
 
-export default class extends Base<IUser> implements IUserDAO {
+export default class extends Base<IGroup> implements IGroupDAO {
     constructor(DB) {
         super(DB);
     }
 
     protected getName()
     {
-        return "users";
+        return "groups";
     }
 }

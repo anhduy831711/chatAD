@@ -1,5 +1,6 @@
 import DB, { IConnectionDB } from "./db"
-import { ALLOWANCE } from "./schema/allowance";
+import { GROUP } from "./schema/group";
+import { USER } from "./schema/user";
 import { Db } from "mongodb";
 let DbConnect: IConnectionDB;
 let db: Db;
@@ -12,14 +13,15 @@ export default class {
         if (!DbConnect.checkConnection()) {
             db = await DbConnect.connect();
             try {
-                await DbConnect.createCollection("allowances", ALLOWANCE);
+                await DbConnect.createCollection("groups", GROUP);
+                await DbConnect.createCollection("users", USER);
             } catch (error) {
                 console.log(error);
             }
         }
         return db;
     }
-    
+
     public static get getClient() {
         if (!DbConnect) {
             DbConnect = new DB();

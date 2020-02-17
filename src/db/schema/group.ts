@@ -12,7 +12,7 @@ export const GROUP: IModel = {
                 },
                 members: {
                     bsonType: "array",
-                    description: "must be "
+                    description: "must be array string"
                 }
             }
         }
