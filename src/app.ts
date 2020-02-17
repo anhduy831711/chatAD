@@ -29,7 +29,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     const numCPUs = cpus().length;
     const PORT = process.env.SERVER_PORT;
     let limit = rateLimit({
-        windowMs: 8 * 1000,
+        windowMs: 8 * 10000,
         max: 68
     });
     let sessionStore = connect_mongo(session);

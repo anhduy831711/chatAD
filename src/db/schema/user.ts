@@ -4,7 +4,7 @@ export const USER: IModel = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["email", "password", "first_name", "last_name", "salt", "ip", "type"],
+            required: ["email", "password", "salt", "ip", "type"],
             properties: {
                 email: {
                     bsonType: "string",
@@ -16,11 +16,11 @@ export const USER: IModel = {
                 },
                 first_name: {
                     bsonType: "string",
-                    description: "must be string and required"
+                    description: "must be string"
                 },
                 last_name: {
                     bsonType: "string",
-                    description: "must be string and required"
+                    description: "must be string"
                 },
                 salt: {
                     bsonType: "string",

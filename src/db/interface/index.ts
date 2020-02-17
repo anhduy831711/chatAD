@@ -6,7 +6,7 @@ export interface IAllowance {
 }
 
 export interface IUser {
-    _id : string,
+    _id? : string,
     email: string,
     password: string,
     first_name: string,
@@ -18,6 +18,7 @@ export interface IUser {
 }
 
 export interface IGroup {
+    _id? : string,
     name: string,
     avatar?: string,
     members?: Array<IUser>

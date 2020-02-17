@@ -5,8 +5,7 @@ import register from "./register";
 export default base.setRouter([{
   method: "post",
   router: login,
-  url: "/login",
-  timeout: 500
+  url: "/login"
 }, {
   method: "post",
   router: register,

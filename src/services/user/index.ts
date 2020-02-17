@@ -5,14 +5,15 @@ import { validate } from "../../utility/validate";
 import { scrypto } from "../../utility/crypto";
 import { log } from "../../constant";
 import { v1, v4 } from "uuid";
+import { ObjectId } from "mongodb";
 
 const { ERROR } = log;
 
 export interface IUserService extends IService {
     getAll(): Promise<Array<IUser>>,
-    registerUser(user: IUser): Promise<IUser>,
-    updateById(id: string, user: any),
-    deleteOne(id: string),
+    registerUser(user: IUser): Promise<string>,
+    updateById(id: ObjectId, user: any),
+    deleteOne(id: ObjectId),
     getOne(query: object, project?: object): Promise<IUser>
 }
 
@@ -27,7 +28,7 @@ export default class extends Base implements IUserService, IValidateUser {
         return userDAO.getAll({});
     }
 
-    async registerUser(user: IUser): Promise<IUser> {
+    async registerUser(user: IUser): Promise<string> {
         user.salt = v4();
         user.password = scrypto.sha512(user.password, user.salt);
         let userDAO = this.buildDataAccess<IUserDAO>(User);
@@ -35,15 +36,16 @@ export default class extends Base implements IUserService, IValidateUser {
         if (userCheck) {
             throw ERROR.USER_EXIST;
         }
-        return await userDAO.create(user);
+        await userDAO.create(user);
+        return "success";
     }
 
-    async updateById(id: string, user: any) {
+    async updateById(id: ObjectId, user: any) {
         let userDAO = this.buildDataAccess<IUserDAO>(User);
         await userDAO.updateOne({ _id: id }, user);
     }
 
-    async deleteOne(id: string) {
+    async deleteOne(id: ObjectId) {
         let userDAO = this.buildDataAccess<IUserDAO>(User);
         //await userDAO.
     }

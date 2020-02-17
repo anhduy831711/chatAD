@@ -80,6 +80,8 @@ export default abstract class {
                 this.res.json(result);
             }
         } catch (error) {
+            console.log(error);
+            
             process.env.NODE_ENV === 'dev' && console.error(error);
             this.res.json(this.result(-1, error));
         }
