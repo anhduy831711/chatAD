@@ -6,16 +6,24 @@ export const MESSAGE: IModel = {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["id", "type"],
+      required: ["idSend", "type", "content", "idRecieve"],
       properties: {
-        id: {
-          bsonType: "string",
+        idSend: {
+          bsonType: "objectId",
           description: "must be string and required",
         },
         type: {
           bsonType: "string",
           description: "must be string",
           enum: getValueOfObject(constant.typeMessage)
+        },
+        content: {
+          bsonType: "string",
+          description: "must be string"
+        },
+        idRecieve: {
+          bsonType: "objectId",
+          description: "must be string"
         }
       }
     }

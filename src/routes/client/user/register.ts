@@ -14,7 +14,7 @@ export default class extends base {
     user.type = "user";
     user.ip = [];
     user.ip.push(ipClient);
-    await userService.registerUser(user);
-    this.result(200, "success");
+    await userService.create(user);
+    return this.result(200, "success");
   }
 }

@@ -1,12 +1,14 @@
+import { ObjectId } from "mongodb";
+
 export interface IAllowance {
-    _id: string,
+    _id?: ObjectId,
     year: number,
     month: number,
     advance: number
 }
 
 export interface IUser {
-    _id? : string,
+    _id? : ObjectId,
     email: string,
     password: string,
     first_name: string,
@@ -18,14 +20,15 @@ export interface IUser {
 }
 
 export interface IGroup {
-    _id? : string,
+    _id? : ObjectId,
     name: string,
     avatar?: string,
     members?: Array<IUser>
 }
 
 export interface IMessage {
-    userID: string,
-    groupID: string,
-    message: string
+    idSender: ObjectId,
+    idReceiver: ObjectId,
+    content: string,
+    type : string
 }

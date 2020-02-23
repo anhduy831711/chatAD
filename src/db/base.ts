@@ -1,12 +1,12 @@
 import { Db, Collection, ObjectId, UpdateWriteOpResult } from "mongodb";
 
 export interface ICommunicationDB<T> {
-    getAll(query: any, project?: any): Promise<Array<T>>,
+    getAll(query: any, project?: object): Promise<Array<T>>,
     create(data: T),
     createMany(datas: Array<T>),
-    updateOne(query: object, data: object): Promise<UpdateWriteOpResult>,
-    deleteOne(id: string),
-    findOne(query: object, project?: any): Promise<T>
+    updateOne(query: object, update: object): Promise<UpdateWriteOpResult>,
+    deleteOne(id: ObjectId),
+    findOne(query: object, project?: object): Promise<T>
 }
 
 export default abstract class <T> implements ICommunicationDB<T> {
@@ -14,7 +14,7 @@ export default abstract class <T> implements ICommunicationDB<T> {
     protected collection: Collection<T>;
     constructor(DB: Db) {
         this.db = DB;
-        this.collection = this.db.collection<T>(this.getName());
+        this.collection = this.db[this.getName()];
     }
 
     public getAll(query: any, project?: Object): Promise<Array<T>> {
@@ -41,13 +41,13 @@ export default abstract class <T> implements ICommunicationDB<T> {
         }
     }
 
-    public async updateOne(query: object, data: object): Promise<UpdateWriteOpResult> {
-        return await this.collection.updateOne(query, data);
+    public async updateOne(query: object, update: object): Promise<UpdateWriteOpResult> {
+        return await this.collection.updateOne(query, update);
     };
 
-    public async deleteOne(id: string) {
-        let query: any = { _id: id };
-        return this.collection.deleteOne(query)
+    public async deleteOne(_id: ObjectId) {
+        let query: any = { _id };
+        return this.collection.deleteOne(query);
     }
 
     public async findOne(query: object, project: object): Promise<T> {

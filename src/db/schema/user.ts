@@ -33,6 +33,10 @@ export const USER: IModel = {
                 type : {
                     bsonType : "string",
                     description : "must be string and required"
+                },
+                friends : {
+                    bsonType : "array",
+                    description : "must be array"
                 }
             }
         }

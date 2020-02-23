@@ -29,7 +29,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     const numCPUs = cpus().length;
     const PORT = process.env.SERVER_PORT;
     let limit = rateLimit({
-        windowMs: 8 * 10000,
+        windowMs: 4 * 1000,
         max: 68
     });
     let sessionStore = connect_mongo(session);
@@ -147,7 +147,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
         });
     })
     wss.on('connection', (ws) => {
-        globalThis.ws = ws;
+        global["websocket"] = ws;
         console.log('started client interval');
         ws.on('message', function incoming(message) {
             console.log('received: %s', message);

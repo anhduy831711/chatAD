@@ -4,7 +4,7 @@ export const GROUP: IModel = {
     validator: {
         $jsonSchema: {
             bsonType: "object",
-            required: ["name", "members"],
+            required: ["name"],
             properties: {
                 name: {
                     bsonType: "string",
@@ -13,6 +13,10 @@ export const GROUP: IModel = {
                 members: {
                     bsonType: "array",
                     description: "must be array string"
+                },
+                avatar: {
+                    bsonType : "string",
+                    description : "must type string"
                 }
             }
         }

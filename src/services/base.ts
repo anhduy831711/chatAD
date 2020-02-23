@@ -1,4 +1,5 @@
 import { Db } from "mongodb"
+import { IUser } from "../db/interface";
 
 export interface IService {}
 
@@ -16,7 +17,7 @@ export default class Base implements IService {
         return new service(this.db, this.session);
     }
 
-    protected get getUser() {
+    protected get getUser() : IUser {
         return this.user;
     }
 

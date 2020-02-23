@@ -1,11 +1,14 @@
 import { Router } from "express";
 import client from "./client";
-import users from "./client/user"
-import { authentication } from "../services/midlequare"
+import users, { NotAuthentication } from "./client/user";
+import { authentication } from "../services/midlequare";
+import groups from "./client/group";
+// import messages from "./client/"
 
 const ROUTE = Router();
-
-ROUTE.use('/users', users);
+ROUTE.use("/", NotAuthentication);
+ROUTE.use('/users', authentication, users);
+ROUTE.use("/groups", authentication, groups);
 ROUTE.use('/', authentication, client);
-
+// ROUTE.use('/messages', authentication, )
 export default ROUTE;

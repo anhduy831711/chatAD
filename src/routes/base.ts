@@ -53,7 +53,6 @@ export default abstract class {
         })
         return ROUTER;
     }
-
     protected result(code: number, dataOrError: any, msg?: string): IResult {
         if (code > 0) {
             return {
@@ -80,8 +79,6 @@ export default abstract class {
                 this.res.json(result);
             }
         } catch (error) {
-            console.log(error);
-            
             process.env.NODE_ENV === 'dev' && console.error(error);
             this.res.json(this.result(-1, error));
         }

@@ -1,0 +1,28 @@
+import base from "../../base";
+import GroupService, { IGroupService } from "../../../services/group";
+import { ObjectId } from "mongodb";
+import { log } from "../../../constant";
+import UserService, { IUserService } from "../../../services/user";
+
+export default class extends base {
+  async action() {
+    let { _id, _idUser } = this.body;
+    const groupID = new ObjectId(_id);
+    let groupService = this.buildService<IGroupService>(GroupService);
+    let group = await groupService.findById(groupID, { members: 1 });
+    if (!group) {
+      return this.result(-1, log.GROUP_ERROR.GROUP_NOT_FOUND);
+    }
+    let userService = this.buildService<IUserService>(UserService);
+    let user = await userService.getOne({ _id: new ObjectId(_idUser) }, { _id: 1 });
+    if (!user) {
+      return this.result(-1, log.USER_ERROR.USER_NOT_FOUND)
+    }
+    let member = group.members ? group.members.find(item => { return item == _idUser }) : undefined;
+    if (member) {
+      return this.result(200, log.SUCCESS.REGISTER_MEMBER_GROUP);
+    }
+    await groupService.update(groupID, { $push: { members: new ObjectId(_idUser) } });
+    return this.result(200, log.SUCCESS.REGISTER_MEMBER_GROUP);
+  }
+}
