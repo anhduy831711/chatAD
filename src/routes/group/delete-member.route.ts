@@ -1,7 +1,7 @@
-import base from "src/routes/base";
-import GroupService, { IGroupService } from "../../../services/group";
+import base from "../base.route";
+import GroupService, { IGroupService } from "../../services/group.service";
 import { ObjectId } from "mongodb";
-import { GROUP_ERROR } from "../../../constant/log";
+import { GROUP_ERROR } from "../../constant/log";
 
 
 export default class extends base {

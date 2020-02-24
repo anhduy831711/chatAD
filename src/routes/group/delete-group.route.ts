@@ -1,5 +1,5 @@
-import base from "../../base";
-import GroupService, { IGroupService } from "../../../services/group"
+import base from "../base.route";
+import GroupService, { IGroupService } from "../../services/group.service"
 import { ObjectId } from "mongodb";
 
 export default class extends base {

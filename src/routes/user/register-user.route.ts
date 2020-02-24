@@ -1,7 +1,7 @@
-import base from "../../base";
-import UserService, { IUserService, IValidateUser } from "../../../services/user"
+import base from "../base.route";
+import UserService, { IUserService, IValidateUser } from "../../services/user.service"
 import * as requestIp from 'request-ip'
-import { IUser } from "../../../db/interface";
+import { IUser } from "../../db/interface";
 
 export default class extends base {
   async action() {

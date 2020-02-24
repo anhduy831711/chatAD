@@ -1,7 +1,7 @@
-import base from "../../base";
-import login from "./login";
-import register from "./register";
-import deleteUser from "./delete"
+import base from "../base.route";
+import login from "./login-user.route";
+import register from "./register-user.route";
+import deleteUser from "./delete-user.route"
 
 export default base.setRouter([{
   method: "delete",

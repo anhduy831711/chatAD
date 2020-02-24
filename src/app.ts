@@ -54,6 +54,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     // view engine setup
     app.set("views", path.join(__dirname, "views"));
     app.set("view engine", "ejs");
+    app.use(express.json({ limit: "300kb" }));
     app.use(helmet());
     app.use(timeout(process.env.TIMEOUT));
     app.use(cors(CORS));

@@ -1,11 +1,11 @@
-import base, { IService } from "../base";
-import { IMessage } from "../../db/interface";
-import MessageDAO, { IMessageDAO } from "../../db/message";
-import { typeMessage } from "../../constant/constant";
-import UserDAO, { IUserDAO } from "../../db/user";
+import base, { IService } from "./base.service";
+import { IMessage } from "../db/interface";
+import MessageDAO, { IMessageDAO } from "../db/message";
+import { typeMessage } from "../constant/constant";
+import UserDAO, { IUserDAO } from "../db/user";
 import { ObjectId } from "mongodb";
-import { log } from "../../constant";
-import GroupDAO, { IGroupDAO } from "../../db/group";
+import { log } from "../constant";
+import GroupDAO, { IGroupDAO } from "../db/group";
 
 export default interface IMessageService extends IService {
   create(message: IMessage)

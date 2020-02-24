@@ -1,7 +1,7 @@
-import base from "../../base";
-import create from "./create";
-import DeleteGroup from "./delete_group";
-import register_group from "./register"
+import base from "../base.route";
+import create from "./create-group.route";
+import DeleteGroup from "./delete-group.route";
+import register_group from "./register-group.route"
 
 export default base.setRouter([{
   method : "post",

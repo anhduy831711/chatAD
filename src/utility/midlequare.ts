@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { scrypto } from "../utility/crypto"
-import db from "./../db"
-import { IResult } from "../routes/base"
+import { scrypto } from "./crypto"
+import db from "../db"
+import { IResult } from "../routes/base.route"
 import { ObjectId } from "mongodb"
 
 export const authentication = (req: Request, res: Response, next: NextFunction) => {

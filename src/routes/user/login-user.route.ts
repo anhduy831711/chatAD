@@ -1,7 +1,7 @@
-import base from "../../base";
-import UserService, { IUserService, IValidateUser } from "../../../services/user"
-import { scrypto } from "../../../utility/crypto"
-import { log } from "../../../constant";
+import base from "../base.route";
+import UserService, { IUserService, IValidateUser } from "../../services/user.service"
+import { scrypto } from "../../utility/crypto"
+import { log } from "../../constant";
 
 export default class extends base {
   async action() {

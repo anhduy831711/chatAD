@@ -1,9 +1,9 @@
-import Base, { IService } from "../base";
-import User, { IUserDAO } from "../../db/user"
-import { IUser } from "../../db/interface"
-import { validate } from "../../utility/validate";
-import { scrypto } from "../../utility/crypto";
-import { log } from "../../constant";
+import Base, { IService } from "./base.service";
+import User, { IUserDAO } from "../db/user"
+import { IUser } from "../db/interface"
+import { validate } from "../utility/validate";
+import { scrypto } from "../utility/crypto";
+import { log } from "../constant";
 import { v1, v4 } from "uuid";
 import { ObjectId } from "mongodb";
 

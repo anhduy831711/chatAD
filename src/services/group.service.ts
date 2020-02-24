@@ -1,8 +1,8 @@
-import base, { IService } from "../base";
-import { IGroup } from "../../db/interface"
-import Group, { IGroupDAO } from "../../db/group";
+import base, { IService } from "./base.service";
+import { IGroup } from "../db/interface"
+import Group, { IGroupDAO } from "../db/group";
 import { ObjectId } from "mongodb";
-import { log } from "../../constant";
+import { log } from "../constant";
 
 export interface IGroupService extends IService {
   create(group: IGroup) : Promise<any>,

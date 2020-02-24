@@ -1,6 +1,6 @@
-import base from "../../base";
-import GroupService, { IGroupService } from "../../../services/group";
-import { IGroup } from "src/db/interface";
+import base from "../base.route";
+import GroupService, { IGroupService } from "../../services/group.service";
+import { IGroup } from "../../db/interface";
 
 export default class extends base {
   async action() {

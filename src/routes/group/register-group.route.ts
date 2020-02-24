@@ -1,8 +1,8 @@
-import base from "../../base";
-import GroupService, { IGroupService } from "../../../services/group";
+import base from "../base.route";
+import GroupService, { IGroupService } from "../../services/group/group.service";
 import { ObjectId } from "mongodb";
-import { log } from "../../../constant";
-import UserService, { IUserService } from "../../../services/user";
+import { log } from "../../constant";
+import UserService, { IUserService } from "../../services/user.service";
 
 export default class extends base {
   async action() {

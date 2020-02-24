@@ -1,5 +1,5 @@
-import base from "../../base";
-import UserService, { IUserService } from "../../../services/user"
+import base from "../base.route";
+import UserService, { IUserService } from "../../services/user.service"
 import { ObjectId } from "mongodb";
 
 export default class extends base{
