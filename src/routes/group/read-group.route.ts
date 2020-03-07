@@ -7,7 +7,7 @@ export default class extends base {
     let query = [{
       $match: this.query
     }];
-    this.buildAggregate(query);
+    groupService.buildAggregate(query);
     let group = await groupService.findByAggregate(query);
     
     return this.result(200, group[0]);

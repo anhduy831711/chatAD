@@ -1,7 +1,9 @@
 import { Db } from "mongodb"
 import { IUser } from "../db/interface";
 
-export interface IService { }
+export interface IService { 
+    buildAggregate(aggregate: Array<object>, limit? : number, start? : number, sort? : object)
+}
 
 export default class Base implements IService {
     protected db: Db;
@@ -23,14 +25,14 @@ export default class Base implements IService {
         return new Model(this.db);
     }
 
-    protected buildAggregate(aggregate: Array<object>, limit = 10, start = 0, sort = { _id: 1 }) {
+    public buildAggregate(aggregate: Array<object>, limit = 10, start = 0, sort = { _id: 1 }) {
         aggregate.push({
             $facet: {
                 count: [{ $count: "count" }],
                 docs: [{
                     $sort: sort
                 }, {
-                    $skip: limit * start
+                    $skip: start
                 }, {
                     $limit: limit
                 }]

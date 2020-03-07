@@ -104,33 +104,4 @@ export default abstract class {
     protected get body() {
         return this.req.body;
     }
-
-    protected buildAggregate(aggregate: Array<object>, limit = 10, start = 0, sort = { _id: 1 }) {
-        aggregate.push({
-            $facet: {
-                count: [{ $count: "count" }],
-                docs: [{
-                    $sort: sort
-                }, {
-                    $skip: limit * start
-                }, {
-                    $limit: limit
-                }]
-            }
-        });
-
-        aggregate.push({
-            $project: {
-                count: { $arrayElemAt: ["$count", 0] },
-                docs: 1
-            }
-        })
-
-        aggregate.push({
-            $project: {
-                docs: 1,
-                total: "$count.count"
-            }
-        })
-    }
 }
