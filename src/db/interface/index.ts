@@ -23,7 +23,8 @@ export interface IGroup {
     _id? : ObjectId,
     name: string,
     avatar?: string,
-    members?: Array<IUser>
+    members?: Array<any>,
+    leader : ObjectId
 }
 
 export interface IMessage {

@@ -1,12 +1,14 @@
 import { Db, Collection, ObjectId, UpdateWriteOpResult } from "mongodb";
 
 export interface ICommunicationDB<T> {
-    getAll(query: any, project?: object): Promise<Array<T>>,
-    create(data: T),
-    createMany(datas: Array<T>),
-    updateOne(query: object, update: object): Promise<UpdateWriteOpResult>,
-    deleteOne(id: ObjectId),
-    findOne(query: object, project?: object): Promise<T>
+    find(query: any, project?: object): Promise<Array<T>>,
+    create(data: T): Promise<any>,
+    createMany(datas: Array<T>): Promise<any>,
+    updateOne(query: object, update: object): Promise<any>,
+    deleteById(id: ObjectId): Promise<any>,
+    findOne(query: object, project?: object): Promise<T>,
+    getByAggregate(query: Array<object>),
+    count(query: object): Promise<number>
 }
 
 export default abstract class <T> implements ICommunicationDB<T> {
@@ -17,7 +19,7 @@ export default abstract class <T> implements ICommunicationDB<T> {
         this.collection = this.db[this.getName()];
     }
 
-    public getAll(query: any, project?: Object): Promise<Array<T>> {
+    public find(query: any, project?: Object): Promise<Array<T>> {
         return this.collection.find(query).project(this.buildProject(project)).toArray();
     }
 
@@ -41,16 +43,24 @@ export default abstract class <T> implements ICommunicationDB<T> {
         }
     }
 
-    public async updateOne(query: object, update: object): Promise<UpdateWriteOpResult> {
-        return await this.collection.updateOne(query, update);
+    public updateOne(query: object, update: object) {
+        return this.collection.updateOne(query, update);
     };
 
-    public async deleteOne(_id: ObjectId) {
-        let query: any = { _id };
+    public deleteById(_id: ObjectId) {
+        let query: object = { _id };
         return this.collection.deleteOne(query);
     }
 
-    public async findOne(query: object, project: object): Promise<T> {
+    public findOne(query: object, project: object): Promise<T> {
         return this.collection.findOne(query, project);
+    }
+
+    public getByAggregate(query: Array<object>) {
+        return this.collection.aggregate(query).toArray();
+    }
+
+    public count(query: object): Promise<number> {
+        return this.collection.find(query).count();
     }
 }

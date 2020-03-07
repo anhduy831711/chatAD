@@ -12,8 +12,6 @@ import DB from "./db";
 import * as WebSocket from "ws";
 import * as url from "url";
 import * as fs from "fs";
-import * as session from "express-session";
-import * as connect_mongo from "connect-mongo";
 import * as compression from 'compression';
 import * as timeout from "connect-timeout";
 import * as helmet from 'helmet';
@@ -32,7 +30,6 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
         windowMs: 4 * 1000,
         max: 68
     });
-    let sessionStore = connect_mongo(session);
 
     // let optionHttps = {
     //     key: fs.readFileSync(path.join(__dirname, "../key.pem")),
@@ -65,19 +62,6 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use("/images", express.static(path.join(__dirname, "images"), optionsPublic));
-    app.use(session({
-        name: 'chatDA',
-        secret: process.env.APP_SECRET || 'session_secret',
-        store: new sessionStore({
-            client: DB.getClient
-        }),
-        saveUninitialized: false,
-        resave: false,
-        cookie: {
-            secure: false,
-            maxAge: 1000 * 60 * 60 * 24 // * 30 // 30 days
-        }
-    }));
 
     app.use("/api", limit, route);
 

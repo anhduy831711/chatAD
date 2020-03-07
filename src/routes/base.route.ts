@@ -1,10 +1,10 @@
 import { Response, Request, Router, NextFunction } from "express";
-import * as Session from 'express-session';
 import DB from "../db";
 import { Db } from "mongodb";
 import { IService } from "../services/base.service";
 import event from "../event";
 import * as EventEmitter from "events";
+import { IUser } from "src/db/interface";
 
 
 export interface IResult {
@@ -27,12 +27,12 @@ export default abstract class {
     private res: Response;
     private db: Db;
     private event: EventEmitter;
-    protected session: Session;
+    protected user: IUser;
 
     constructor(req: Request, res: Response) {
         this.req = req;
         this.res = res;
-        this.session = req["session"];
+        this.user = req["authentication"];
         this.event = event.start();
     }
 
@@ -81,7 +81,7 @@ export default abstract class {
     abstract async action();
 
     protected buildService<T extends IService>(service: { new(...args): T }): T {
-        return new service(this.db, this.session);
+        return new service(this.db, this.user);
     }
 
     protected emitEvent(event, ...args): boolean {
@@ -93,10 +93,44 @@ export default abstract class {
     }
 
     protected get query() {
+        for (const key in this.req.query) {
+            if (this.req.query.hasOwnProperty(key) && !this.req.query[key]) {
+                delete this.req.query[key];
+            }
+        }
         return this.req.query;
     }
 
     protected get body() {
         return this.req.body;
+    }
+
+    protected buildAggregate(aggregate: Array<object>, limit = 10, start = 0, sort = { _id: 1 }) {
+        aggregate.push({
+            $facet: {
+                count: [{ $count: "count" }],
+                docs: [{
+                    $sort: sort
+                }, {
+                    $skip: limit * start
+                }, {
+                    $limit: limit
+                }]
+            }
+        });
+
+        aggregate.push({
+            $project: {
+                count: { $arrayElemAt: ["$count", 0] },
+                docs: 1
+            }
+        })
+
+        aggregate.push({
+            $project: {
+                docs: 1,
+                total: "$count.count"
+            }
+        })
     }
 }

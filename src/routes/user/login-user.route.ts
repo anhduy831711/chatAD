@@ -10,7 +10,7 @@ export default class extends base {
     validateUser.validate_email(email);
     validateUser.validate_password(password);
     let userService = this.buildService<IUserService>(UserService);
-    let user = await userService.getOne({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, salt: 1 });
+    let user = await userService.find({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, salt: 1 });
     if(!user){
       throw log.USER_ERROR.USER_NOT_FOUND;
     }
@@ -20,8 +20,6 @@ export default class extends base {
     }
     let expired = new Date();
     expired.setDate(expired.getDate() + 1);
-
-    this.session.userID = user._id;
     let token = scrypto.encrypt(JSON.stringify({
       _id: user._id,
       expired: expired.getTime()

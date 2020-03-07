@@ -14,7 +14,7 @@ export interface IUserService extends IService {
     create(user: IUser): Promise<string>,
     updateById(id: ObjectId, user: object),
     deleteOne(id: ObjectId),
-    getOne(query: object, project?: object): Promise<IUser>
+    find(query: object, project?: object): Promise<IUser>
 }
 
 export interface IValidateUser extends IService {
@@ -25,7 +25,7 @@ export interface IValidateUser extends IService {
 export default class extends Base implements IUserService, IValidateUser {
     getAll(): Promise<Array<IUser>> {
         let userDAO = this.buildDataAccess<IUserDAO>(User);
-        return userDAO.getAll({});
+        return userDAO.find({});
     }
 
     async create(user: IUser): Promise<string> {
@@ -47,7 +47,7 @@ export default class extends Base implements IUserService, IValidateUser {
 
     async deleteOne(id: ObjectId) {
         let userDAO = this.buildDataAccess<IUserDAO>(User);
-        return userDAO.deleteOne(id);
+        return userDAO.deleteById(id);
     }
 
     validate_email(email) {
@@ -60,8 +60,8 @@ export default class extends Base implements IUserService, IValidateUser {
             throw ERROR.PASSWORD_FAIL;
     }
 
-    getOne(query: object, project?: object): Promise<IUser> {
-        let userDAO = this.buildService<IUserDAO>(User);
+    find(query: object, project?: object): Promise<IUser> {
+        let userDAO = this.buildDataAccess<IUserDAO>(User);
         return userDAO.findOne(query, project);
     }
 }

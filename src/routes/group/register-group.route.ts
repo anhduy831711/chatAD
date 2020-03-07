@@ -1,5 +1,5 @@
 import base from "../base.route";
-import GroupService, { IGroupService } from "../../services/group/group.service";
+import GroupService, { IGroupService } from "../../services/group.service";
 import { ObjectId } from "mongodb";
 import { log } from "../../constant";
 import UserService, { IUserService } from "../../services/user.service";
@@ -14,7 +14,7 @@ export default class extends base {
       return this.result(-1, log.GROUP_ERROR.GROUP_NOT_FOUND);
     }
     let userService = this.buildService<IUserService>(UserService);
-    let user = await userService.getOne({ _id: new ObjectId(_idUser) }, { _id: 1 });
+    let user = await userService.find({ _id: new ObjectId(_idUser) }, { _id: 1 });
     if (!user) {
       return this.result(-1, log.USER_ERROR.USER_NOT_FOUND)
     }
