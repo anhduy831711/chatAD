@@ -10,8 +10,8 @@ export default class extends base {
     validateUser.validate_email(email);
     validateUser.validate_password(password);
     let userService = this.buildService<IUserService>(UserService);
-    let user = await userService.find({ email }, { email: 1, first_name: 1, last_name: 1, password: 1, salt: 1 });
-    if(!user){
+    let user = await userService.findByEmail(email, { email: 1, first_name: 1, last_name: 1, password: 1, salt: 1 });
+    if (!user) {
       throw log.USER_ERROR.USER_NOT_FOUND;
     }
     let hashPassword = scrypto.sha512(password, user.salt);
@@ -24,6 +24,7 @@ export default class extends base {
       _id: user._id,
       expired: expired.getTime()
     }));
+    this.req.session["authentication"] = user._id;
     return { token };
   }
 }

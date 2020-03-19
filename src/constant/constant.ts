@@ -5,9 +5,7 @@ export const CORS = {
     "optionsSuccessStatus": 204
 }
 
-export const ENV = {
-
-}
+export const ENV = process.env;
 
 export const optionsPublic = {
     dotfiles: 'ignore',

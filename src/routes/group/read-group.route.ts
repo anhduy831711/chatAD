@@ -10,6 +10,6 @@ export default class extends base {
     groupService.buildAggregate(query);
     let group = await groupService.findByAggregate(query);
     
-    return this.result(200, group[0]);
+    return group[0];
   }
 }

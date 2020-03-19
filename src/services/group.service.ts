@@ -10,7 +10,8 @@ export interface IGroupService extends IService {
   delete(_id: ObjectId): Promise<any>,
   findById(_id: ObjectId, project?: object): Promise<IGroup>,
   find(query: object, project?: object): Promise<Array<IGroup>>,
-  findByAggregate(query: Array<object>): Promise<Array<IGroup>>
+  findByAggregate(query: Array<object>): Promise<Array<IGroup>>,
+  save(group: IGroup)
 }
 
 export default class extends base implements IGroupService {
@@ -37,12 +38,16 @@ export default class extends base implements IGroupService {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
     let group = await this.findById(_id);
     if (group.leader != this.getUser._id) {
-      throw log.ERROR.NOT_LEADER_GROUP;
+      throw log.GROUP_ERROR.NOT_LEADER_GROUP;
     }
     return groupDAO.deleteById(_id);
   }
   findByAggregate(query: Array<object>): Promise<Array<IGroup>> {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
-    return groupDAO.getByAggregate(query);
+    return groupDAO.aggregate(query);
+  }
+  save(group : IGroup){
+    let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
+    return groupDAO.save(group);
   }
 }

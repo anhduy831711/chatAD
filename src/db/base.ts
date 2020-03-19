@@ -7,8 +7,9 @@ export interface ICommunicationDB<T> {
     updateOne(query: object, update: object): Promise<any>,
     deleteById(id: ObjectId): Promise<any>,
     findOne(query: object, project?: object): Promise<T>,
-    getByAggregate(query: Array<object>),
-    count(query: object): Promise<number>
+    aggregate(query: Array<object>),
+    count(query: object): Promise<number>,
+    save(data: T)
 }
 
 export default abstract class <T> implements ICommunicationDB<T> {
@@ -56,11 +57,15 @@ export default abstract class <T> implements ICommunicationDB<T> {
         return this.collection.findOne(query, project);
     }
 
-    public getByAggregate(query: Array<object>) {
+    public aggregate(query: Array<object>) {
         return this.collection.aggregate(query).toArray();
     }
 
     public count(query: object): Promise<number> {
         return this.collection.find(query).count();
+    }
+
+    public save(data: T) {
+        return this.collection.save(data);
     }
 }

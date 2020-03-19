@@ -1,7 +1,8 @@
 import base from "../base.route";
 import login from "./login-user.route";
 import register from "./register-user.route";
-import deleteUser from "./delete-user.route"
+import deleteUser from "./delete-user.route";
+import logout from "./logout-user.route";
 
 export default base.setRouter([{
   method: "delete",
@@ -17,4 +18,8 @@ export const NotAuthentication = base.setRouter([{
   method: "post",
   router: register,
   url: "/register",
+}, {
+  method: "get",
+  router: logout,
+  url: "/logout"
 }])

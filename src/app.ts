@@ -16,16 +16,21 @@ import * as compression from 'compression';
 import * as timeout from "connect-timeout";
 import * as helmet from 'helmet';
 import * as rateLimit from 'express-rate-limit';
+import * as session from "express-session";
+import * as redis_connect from "connect-redis";
+import * as redis from "redis";
 
 import event from "./event";
 import "./config";
 
+var redisStore = redis_connect(session);
+var client = redis.createClient();
 const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
 (async () => {
     let Db = await DB.start();
     const numCPUs = cpus().length;
-    const PORT = process.env.SERVER_PORT;
+    const PORT = ENV.PORT;
     let limit = rateLimit({
         windowMs: 4 * 1000,
         max: 68
@@ -46,12 +51,21 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
     var app = express();
 
+    let sessionParser = session({
+        secret: ENV.APP_SECRET,
+        store: new redisStore({ host: ENV.HOST, port: 6379, client: client, ttl: 260 }),
+        saveUninitialized: false,
+        resave: false,
+        cookie: { maxAge: 60000 * 60 * 24 }
+    });
+
     logger.format('ebp', '[Backend] :method :url :status :res[content-length] - :response-time ms');
 
     // view engine setup
     app.set("views", path.join(__dirname, "views"));
     app.set("view engine", "ejs");
     app.use(express.json({ limit: "300kb" }));
+    app.use(sessionParser);
     app.use(helmet());
     app.use(timeout(process.env.TIMEOUT));
     app.use(cors(CORS));
@@ -62,12 +76,29 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     app.use(express.urlencoded({ extended: false }));
     app.use(cookieParser());
     app.use("/images", express.static(path.join(__dirname, "images"), optionsPublic));
+    app.use("/public", express.static(path.join(__dirname, "public"), optionsPublic));
 
     app.use("/api", limit, route);
 
-    app.get("/test", (req, res) => {
+    app.get("/chat", (req, res, next) => {
+        if (!req.session["authentication"]) {
+            return res.redirect("/");
+        }
+        next();
+    }, (req, res) => {
         res.render("index");
     })
+
+    app.get("/", (req, res) => {
+        if (req.session["authentication"]) {
+            res.redirect('/chat');
+            return;
+        }
+        res.render("login");
+        Event.on("listenSocket",(request, socket, header)=>{
+            
+        })
+    });
 
     const wss = new WebSocket.Server({ noServer: true });
 
@@ -123,21 +154,34 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
     server.on('upgrade', (request, socket, head) => {
         console.log('Parsing session from request...');
-
         const pathname = url.parse(request.url).pathname;
-        console.log(pathname);
-
-        wss.handleUpgrade(request, socket, head, function done(ws) {
-            wss.emit('connection', ws, request);
-        });
+        let response = {} as any;
+        sessionParser(request, response, () => {  
+            if (!request.session.authentication) {
+                socket.destroy();
+                return;
+            }
+            wss.handleUpgrade(request, socket, head, function done(ws) {
+                wss.emit('connection', ws, request);
+            });
+        })
     })
-    wss.on('connection', (ws) => {
+    wss.on('connection', (ws, request) => {
+
         global["websocket"] = ws;
         console.log('started client interval');
-        ws.on('message', function incoming(message) {
+        ws["userID"] = request["session"].authentication;
+        ws.on('message', (message) => {
             console.log('received: %s', message);
-        });
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    console.log(client["userID"]);
 
+                    client.send("hello");
+                }
+            });
+
+        });
         ws.on('close', function () {
             console.log('stopping client interval');
             //clearInterval(id);

@@ -32,7 +32,7 @@ export default abstract class {
     constructor(req: Request, res: Response) {
         this.req = req;
         this.res = res;
-        this.user = req["authentication"];
+        this.user = req.session["authentication"];
         this.event = event.start();
     }
 
@@ -70,7 +70,7 @@ export default abstract class {
 
             if (result) {
                 this.res.set('Content-Type', 'application/json');
-                this.res.json(result);
+                this.res.json(this.result(200, result));
             }
         } catch (error) {
             process.env.NODE_ENV === 'dev' && console.error(error);

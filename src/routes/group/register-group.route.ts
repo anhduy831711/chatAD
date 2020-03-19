@@ -16,13 +16,13 @@ export default class extends base {
     let userService = this.buildService<IUserService>(UserService);
     let user = await userService.find({ _id: new ObjectId(_idUser) }, { _id: 1 });
     if (!user) {
-      return this.result(-1, log.USER_ERROR.USER_NOT_FOUND)
+      throw log.USER_ERROR.USER_NOT_FOUND;
     }
     let member = group.members ? group.members.find(item => { return item == _idUser }) : undefined;
     if (member) {
-      return this.result(200, log.SUCCESS.REGISTER_MEMBER_GROUP);
+      return log.SUCCESS.REGISTER_MEMBER_GROUP;
     }
     await groupService.update(groupID, { $push: { members: new ObjectId(_idUser) } });
-    return this.result(200, log.SUCCESS.REGISTER_MEMBER_GROUP);
+    return log.SUCCESS.REGISTER_MEMBER_GROUP;
   }
 }

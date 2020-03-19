@@ -18,7 +18,8 @@ export default class {
             try {
                 db["groups"] = await DbConnect.createCollection("groups", GROUP);
                 db["users"] = await DbConnect.createCollection("users", USER);
-                db["messages"] = await DbConnect.createCollection("messages",MESSAGE);
+                await db["users"].createIndex({ email: 1 });
+                db["messages"] = await DbConnect.createCollection("messages", MESSAGE);
             } catch (error) {
                 console.log(error);
             }

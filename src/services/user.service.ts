@@ -14,7 +14,9 @@ export interface IUserService extends IService {
     create(user: IUser): Promise<string>,
     updateById(id: ObjectId, user: object),
     deleteOne(id: ObjectId),
-    find(query: object, project?: object): Promise<IUser>
+    find(query: object, project?: object): Promise<IUser[]>,
+    findById(_id: ObjectId, project?: object): Promise<IUser>,
+    findByEmail(email: string, project?: object): Promise<IUser>
 }
 
 export interface IValidateUser extends IService {
@@ -50,9 +52,13 @@ export default class extends Base implements IUserService, IValidateUser {
         return userDAO.deleteById(id);
     }
 
-    validate_email(email) {
+    async validate_email(email) {
         if (!validate.email(email))
             throw ERROR.EMAIL_FAIL;
+        let user = await this.findByEmail(email, { _id: 1 });
+        if (user) {
+            throw ERROR.MAIL_EXISTED;
+        }
     }
 
     validate_password(password) {
@@ -60,8 +66,19 @@ export default class extends Base implements IUserService, IValidateUser {
             throw ERROR.PASSWORD_FAIL;
     }
 
-    find(query: object, project?: object): Promise<IUser> {
+    find(query: object, project?: object): Promise<IUser[]> {
         let userDAO = this.buildDataAccess<IUserDAO>(User);
+        return userDAO.find(query, project);
+    }
+
+    findById(_id: ObjectId, project?: object): Promise<IUser> {
+        let userDAO = this.buildDataAccess<IUserDAO>(User);
+        let query: object = { _id };
+        return userDAO.findOne(query, project);
+    }
+    findByEmail(email: string, project?: object): Promise<IUser> {
+        let userDAO = this.buildDataAccess<IUserDAO>(User);
+        let query: object = { email };
         return userDAO.findOne(query, project);
     }
 }
