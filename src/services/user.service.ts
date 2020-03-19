@@ -21,7 +21,8 @@ export interface IUserService extends IService {
 
 export interface IValidateUser extends IService {
     validate_email(email: string): void,
-    validate_password(password: string): void
+    validate_password(password: string): void,
+    check_exist_email(email: string): void
 }
 
 export default class extends Base implements IUserService, IValidateUser {
@@ -52,9 +53,12 @@ export default class extends Base implements IUserService, IValidateUser {
         return userDAO.deleteById(id);
     }
 
-    async validate_email(email) {
+    validate_email(email) {
         if (!validate.email(email))
             throw ERROR.EMAIL_FAIL;
+    }
+
+    async check_exist_email(email) {
         let user = await this.findByEmail(email, { _id: 1 });
         if (user) {
             throw ERROR.MAIL_EXISTED;

@@ -14,8 +14,15 @@ export const authentication = (req: Request, res: Response, next: NextFunction) 
   }
 
   token = token.split(" ")[1];
-  const json = JSON.parse(scrypto.decrypt(token.toString()));
+  let json;
+  try {
+    json = JSON.parse(scrypto.decrypt(token.toString()));
+  } catch (error) {
+    console.log(error);
+    return res.status(401).json({ code: 401, data: log.ERROR.UNAUTHENTICATION } as IResult);
+  }
 
+  
   if (!(json._id && json.expired - Date.now() > 0)) {
     return res.status(401).json({ code: 401, data: log.ERROR.UNAUTHENTICATION } as IResult);
   }

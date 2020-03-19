@@ -95,98 +95,113 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
             return;
         }
         res.render("login");
-        Event.on("listenSocket",(request, socket, header)=>{
-            
+        Event.on("listenSocket", (request, socket, header) => {
+
         })
     });
 
     const wss = new WebSocket.Server({ noServer: true });
 
-    // if (cluster.isMaster) {
-    //     console.log(`Master ${process.pid} is running`);
+    if (Boolean(ENV.product)) {
+        if (cluster.isMaster) {
+            console.log(`Master ${process.pid} is running`);
 
-    //     // Fork workers.
-    //     for (let i = 0; i < numCPUs; i++) {
-    //         cluster.fork();
-    //     }
-
-    //     cluster.on("exit", (worker, code, signal) => {
-    //         console.log(`worker ${worker.process.pid} died`);
-    //     });
-    // } else {
-    //     var server = http.createServer(app)
-    //     server.listen(PORT, () => {
-    //         console.log(`start server at port ${PORT}`);
-    //     });
-
-
-    //     server.on('upgrade', (request, socket, head) => {
-    //         console.log('Parsing session from request...');
-
-    //         const pathname = url.parse(request.url).pathname;
-    //         console.log(pathname);
-
-    //         wss.handleUpgrade(request, socket, head, function done(ws) {
-    //             wss.emit('connection', ws, request);
-    //         });
-    //     })
-    //     wss.on('connection', (ws) => {
-
-    //         console.log('started client interval');
-    //         ws.on('message', function incoming(message) {
-    //             console.log('received: %s', message);
-    //         });
-
-    //         ws.on('close', function () {
-    //             console.log('stopping client interval');
-    //             //clearInterval(id);
-    //         });
-    //         //ws.send('something');
-    //     });
-    //     console.log(`Worker ${process.pid} started`);
-    // }
-
-    var server = http.createServer(app)
-    server.listen(PORT, () => {
-        console.log(`start server at port ${PORT}`);
-    });
-
-
-    server.on('upgrade', (request, socket, head) => {
-        console.log('Parsing session from request...');
-        const pathname = url.parse(request.url).pathname;
-        let response = {} as any;
-        sessionParser(request, response, () => {  
-            if (!request.session.authentication) {
-                socket.destroy();
-                return;
+            // Fork workers.
+            for (let i = 0; i < numCPUs; i++) {
+                cluster.fork();
             }
-            wss.handleUpgrade(request, socket, head, function done(ws) {
-                wss.emit('connection', ws, request);
+
+            cluster.on("exit", (worker, code, signal) => {
+                console.log(`worker ${worker.process.pid} died`);
             });
-        })
-    })
-    wss.on('connection', (ws, request) => {
+        } else {
+            var server = http.createServer(app)
+            server.listen(PORT, () => {
+                console.log(`start server at port ${PORT}`);
+            });
 
-        global["websocket"] = ws;
-        console.log('started client interval');
-        ws["userID"] = request["session"].authentication;
-        ws.on('message', (message) => {
-            console.log('received: %s', message);
-            wss.clients.forEach(function each(client) {
-                if (client.readyState === WebSocket.OPEN) {
-                    console.log(client["userID"]);
 
-                    client.send("hello");
+            server.on('upgrade', (request, socket, head) => {
+                console.log('Parsing session from request...');
+                const pathname = url.parse(request.url).pathname;
+                let response = {} as any;
+                sessionParser(request, response, () => {
+                    if (!request.session.authentication) {
+                        socket.destroy();
+                        return;
+                    }
+                    wss.handleUpgrade(request, socket, head, function done(ws) {
+                        wss.emit('connection', ws, request);
+                    });
+                })
+            })
+            wss.on('connection', (ws, request) => {
+        
+                global["websocket"] = ws;
+                console.log('started client interval');
+                ws["userID"] = request["session"].authentication;
+                ws.on('message', (message) => {
+                    console.log('received: %s', message);
+                    wss.clients.forEach(function each(client) {
+                        if (client.readyState === WebSocket.OPEN) {
+                            console.log(client["userID"]);
+        
+                            client.send("hello");
+                        }
+                    });
+        
+                });
+                ws.on('close', function () {
+                    console.log('stopping client interval');
+                    //clearInterval(id);
+                });
+                //ws.send('something');
+            });
+            console.log(`Worker ${process.pid} started`);
+        }
+    } else {
+        var server = http.createServer(app)
+        server.listen(PORT, () => {
+            console.log(`start server at port ${PORT}`);
+        });
+    
+    
+        server.on('upgrade', (request, socket, head) => {
+            console.log('Parsing session from request...');
+            const pathname = url.parse(request.url).pathname;
+            let response = {} as any;
+            sessionParser(request, response, () => {
+                if (!request.session.authentication) {
+                    socket.destroy();
+                    return;
                 }
+                wss.handleUpgrade(request, socket, head, function done(ws) {
+                    wss.emit('connection', ws, request);
+                });
+            })
+        })
+        wss.on('connection', (ws, request) => {
+    
+            global["websocket"] = ws;
+            console.log('started client interval');
+            ws["userID"] = request["session"].authentication;
+            ws.on('message', (message) => {
+                console.log('received: %s', message);
+                wss.clients.forEach(function each(client) {
+                    if (client.readyState === WebSocket.OPEN) {
+                        console.log(client["userID"]);
+    
+                        client.send("hello");
+                    }
+                });
+    
             });
-
+            ws.on('close', function () {
+                console.log('stopping client interval');
+                //clearInterval(id);
+            });
+            //ws.send('something');
         });
-        ws.on('close', function () {
-            console.log('stopping client interval');
-            //clearInterval(id);
-        });
-        //ws.send('something');
-    });
-    console.log(`Worker ${process.pid} started`);
+        console.log(`Worker ${process.pid} started`);
+    }
 })();

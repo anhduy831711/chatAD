@@ -8,7 +8,8 @@ export default class extends base {
   async action() {
     let user = this.body as IUser;
     let validateUser = this.buildService<IValidateUser>(UserService);
-    await validateUser.validate_email(user.email);
+    validateUser.validate_email(user.email);
+    await validateUser.check_exist_email(user.email);
     validateUser.validate_password(user.password);
     let userService = this.buildService<IUserService>(UserService);
     let ipClient = requestIp.getClientIp(this.req);
