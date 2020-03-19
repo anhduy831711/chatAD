@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npm run start:production",
+    "start": "nodemon --config nodemon.json",
     "debug": "nodemon --config nodemon-debug.json",
-    "build": "npm run build:ts",
+    "build": "npm run build:ts -prod",
     "build:ts": "tsc",
     "tsc": "tsc || echo TSC compilation has errors.",
     "tslint": "tslint -c tslint.json -p tsconfig.json -t codeFrame",

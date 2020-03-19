@@ -102,7 +102,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
     const wss = new WebSocket.Server({ noServer: true });
 
-    if (Boolean(ENV.product)) {
+    if (ENV.NODE_ENV == "production") {
         if (cluster.isMaster) {
             console.log(`Master ${process.pid} is running`);
 
