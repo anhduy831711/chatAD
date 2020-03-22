@@ -23,8 +23,8 @@ import * as redis from "redis";
 import event from "./event";
 import "./config";
 
-var redisStore = redis_connect(session);
-var client = redis.createClient();
+// var redisStore = redis_connect(session);
+// var client = redis.createClient();
 const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
 (async () => {
@@ -53,7 +53,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
 
     let sessionParser = session({
         secret: ENV.APP_SECRET,
-        store: new redisStore({ host: ENV.HOST, port: 6379, client: client, ttl: 260 }),
+        //store: new redisStore({ host: ENV.HOST, port: 6379, client: client, ttl: 260 }),
         saveUninitialized: false,
         resave: false,
         cookie: { maxAge: 60000 * 60 * 24 }
