@@ -8,7 +8,6 @@
   <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 
   <script src="https://use.typekit.net/hoy3lrg.js"></script>
-  <script>try { Typekit.load({ async: true }); } catch (e) { }</script>
   <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
   <link rel='stylesheet prefetch'
     href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
@@ -1033,16 +1032,16 @@ Website: http://emilcarlsson.se/
   <script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
   <script>
     let ws = new WebSocket(`ws://${location.host}`);
-    ws.onmessage = (message)=>{
-
+    ws.onmessage = (message) => {
+      console.log(message);
     }
-    
+
     $(".messages").animate({ scrollTop: $(document).height() }, "fast");
 
     $("#profile-img").click(function () {
       $("#status-options").toggleClass("active");
     });
-    
+
     $(".expand-button").click(function () {
       $("#profile").toggleClass("expanded");
       $("#contacts").toggleClass("expanded");

@@ -18,7 +18,8 @@ export const SUCCESS = {
   CREATE_MESSAGE : "Create Message Success",
   CREATE_GROUP : "Create Group Success",
   DELETE_GROUP : "Delete Group Success",
-  DELETE_MEMBER_GROUP : "Delete Member Group Success"
+  DELETE_MEMBER_GROUP : "Delete Member Group Success",
+  UPDATE_GROUP : "Update group success"
 }
 
 export const USER_ERROR = {

@@ -9,15 +9,16 @@ export interface IGroupService extends IService {
   update(_id: ObjectId, update: object): Promise<any>,
   delete(_id: ObjectId): Promise<any>,
   findById(_id: ObjectId, project?: object): Promise<IGroup>,
-  find(query: object, project?: object): Promise<Array<IGroup>>,
+  find(query: object, project?: object, skip?: number, limit?: number): Promise<Array<IGroup>>,
   findByAggregate(query: Array<object>): Promise<Array<IGroup>>,
-  save(group: IGroup)
+  save(group: IGroup),
+  count(query: object)
 }
 
 export default class extends base implements IGroupService {
-  find(query: object, project?: object): Promise<IGroup[]> {
+  find(query: object, project?: object, skip?: number, limit?: number): Promise<IGroup[]> {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
-    return groupDAO.find(query, project);
+    return groupDAO.find(query, project, skip, limit);
   }
   findById(_id: ObjectId, project?: object): Promise<IGroup> {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
@@ -26,13 +27,13 @@ export default class extends base implements IGroupService {
   create(group: IGroup): Promise<any> {
     group.leader = this.getUser._id;
     group.members = [];
-    group.members.push(new ObjectId(this.getUser._id));
+    group.members.push(this.getUser._id);
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
     return groupDAO.create(group);
   }
   update(_id: ObjectId, update: object): Promise<any> {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
-    return groupDAO.updateOne({ _id }, update);
+    return groupDAO.updateOne({ _id }, { $set: update });
   }
   async delete(_id: ObjectId): Promise<any> {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
@@ -46,8 +47,12 @@ export default class extends base implements IGroupService {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
     return groupDAO.aggregate(query);
   }
-  save(group : IGroup){
+  save(group: IGroup) {
     let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
     return groupDAO.save(group);
+  }
+  count(query: object) {
+    let groupDAO = this.buildDataAccess<IGroupDAO>(Group);
+    return groupDAO.count(query);
   }
 }

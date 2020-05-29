@@ -35,7 +35,7 @@ $("#frmLogin").on("submit", (e) => {
     method: "POST",
     data,
     success: (data) => {
-      localStorage.setItem("token", `Bearer ${data.token}`);
+      localStorage.setItem("Authorization", `Bearer ${data.token}`);
       window.location.href = "/chat"
     },
     error: (error) => {

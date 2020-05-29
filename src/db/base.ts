@@ -1,7 +1,7 @@
 import { Db, Collection, ObjectId, UpdateWriteOpResult } from "mongodb";
 
 export interface ICommunicationDB<T> {
-    find(query: any, project?: object): Promise<Array<T>>,
+    find(query: any, project?: object, skip?: number, limit?: number): Promise<Array<T>>,
     create(data: T): Promise<any>,
     createMany(datas: Array<T>): Promise<any>,
     updateOne(query: object, update: object): Promise<any>,
@@ -20,7 +20,7 @@ export default abstract class <T> implements ICommunicationDB<T> {
         this.collection = this.db[this.getName()];
     }
 
-    public find(query: any, project?: Object): Promise<Array<T>> {
+    public find(query: any, project?: Object, skip?: number, limit?: number): Promise<Array<T>> {
         return this.collection.find(query).project(this.buildProject(project)).toArray();
     }
 

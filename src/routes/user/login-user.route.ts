@@ -24,7 +24,7 @@ export default class extends base {
       _id: user._id,
       expired: expired.getTime()
     }));
-    this.req.session["authentication"] = user._id;
+    this.req.session["authentication"] = user;
     return token;
   }
 }

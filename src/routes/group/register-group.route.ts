@@ -6,7 +6,8 @@ import UserService, { IUserService } from "../../services/user.service";
 
 export default class extends base {
   async action() {
-    let { _id, _idUser } = this.body;
+    let { _id } = this.params;
+    let { _idUser } = this.body;
     const groupID = new ObjectId(_id);
     let groupService = this.buildService<IGroupService>(GroupService);
     let group = await groupService.findById(groupID, { members: 1 });

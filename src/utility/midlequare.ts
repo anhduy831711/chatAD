@@ -6,11 +6,15 @@ import { ObjectId } from "mongodb"
 import { log } from "../constant";
 
 export const authentication = (req: Request, res: Response, next: NextFunction) => {
-  let token: string = req.get("Authorization");
+  let token: string = req.get("authorization");
 
   if (!token) {
     //return res.status(403).json({ code: 403, data: log.ERROR.UNAUTHENTICATION } as IResult);
     return res.redirect("/");
+  }
+  
+  if (req.session["authentication"]) {
+    return next();
   }
 
   token = token.split(" ")[1];
@@ -22,7 +26,7 @@ export const authentication = (req: Request, res: Response, next: NextFunction) 
     return res.status(401).json({ code: 401, data: log.ERROR.UNAUTHENTICATION } as IResult);
   }
 
-  
+
   if (!(json._id && json.expired - Date.now() > 0)) {
     return res.status(401).json({ code: 401, data: log.ERROR.UNAUTHENTICATION } as IResult);
   }
@@ -34,8 +38,7 @@ export const authentication = (req: Request, res: Response, next: NextFunction) 
     }
     else {
       delete user.password;
-      req.session["authentication"] = user._id;
-      req["authentication"] = user;
+      req.session["authentication"] = user;
       next();
     }
   })

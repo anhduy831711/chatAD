@@ -67,11 +67,8 @@ export default abstract class {
         try {
             this.db = await DB.start();
             let result = await this.action();
-
-            if (result) {
-                this.res.set('Content-Type', 'application/json');
-                this.res.json(this.result(200, result));
-            }
+            this.res.set('Content-Type', 'application/json');
+            this.res.json(this.result(200, result));
         } catch (error) {
             process.env.NODE_ENV === 'dev' && console.error(error);
             this.res.json(this.result(-1, error));

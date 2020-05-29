@@ -32,7 +32,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     const numCPUs = cpus().length;
     const PORT = ENV.PORT;
     let limit = rateLimit({
-        windowMs: 4 * 1000,
+        windowMs: 4 * 10000,
         max: 68
     });
 
@@ -78,7 +78,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
     app.use("/images", express.static(path.join(__dirname, "images"), optionsPublic));
     app.use("/public", express.static(path.join(__dirname, "public"), optionsPublic));
 
-    app.use("/api", limit, route);
+    app.use("/api", route);
 
     app.get("/chat", (req, res, next) => {
         if (!req.session["authentication"]) {
@@ -95,9 +95,6 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
             return;
         }
         res.render("login");
-        Event.on("listenSocket", (request, socket, header) => {
-
-        })
     });
 
     const wss = new WebSocket.Server({ noServer: true });
@@ -136,20 +133,21 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
                 })
             })
             wss.on('connection', (ws, request) => {
-        
+
                 global["websocket"] = ws;
-                console.log('started client interval');
-                ws["userID"] = request["session"].authentication;
+                ws["userID"] = request["session"].authentication._id;
+                console.log(ws["userID"]);
+
                 ws.on('message', (message) => {
                     console.log('received: %s', message);
                     wss.clients.forEach(function each(client) {
                         if (client.readyState === WebSocket.OPEN) {
                             console.log(client["userID"]);
-        
+
                             client.send("hello");
                         }
                     });
-        
+
                 });
                 ws.on('close', function () {
                     console.log('stopping client interval');
@@ -164,8 +162,7 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
         server.listen(PORT, () => {
             console.log(`start server at port ${PORT}`);
         });
-    
-    
+
         server.on('upgrade', (request, socket, head) => {
             console.log('Parsing session from request...');
             const pathname = url.parse(request.url).pathname;
@@ -181,20 +178,28 @@ const { CORS, ENV, bodyParserOptions, optionsPublic } = constant;
             })
         })
         wss.on('connection', (ws, request) => {
-    
             global["websocket"] = ws;
-            console.log('started client interval');
-            ws["userID"] = request["session"].authentication;
+            console.log('client connect');
+
+            ws["userID"] = request["session"].authentication._id;
+            wss.clients.forEach(function each(client) {
+                if (client.readyState === WebSocket.OPEN) {
+                    if (client["userID"] == "5eaae72d174806432816881a") {
+                        client.send("hello");
+                    }
+                }
+            });
+
             ws.on('message', (message) => {
                 console.log('received: %s', message);
                 wss.clients.forEach(function each(client) {
                     if (client.readyState === WebSocket.OPEN) {
                         console.log(client["userID"]);
-    
+
                         client.send("hello");
                     }
                 });
-    
+
             });
             ws.on('close', function () {
                 console.log('stopping client interval');
